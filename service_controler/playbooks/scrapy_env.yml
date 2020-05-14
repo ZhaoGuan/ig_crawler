@@ -1,0 +1,68 @@
+- hosts: crawler
+  remote_user: root
+  become: yes
+  become_method: sudo
+  gather_facts: true
+  tasks:
+#   pyenv
+#   - name: yum install
+#     yum:
+#       name:
+#         - zlib-devel
+#         - bzip2-devel
+#         - openssl-devel
+#         - ncurses-devel
+#         - sqlite-devel
+#         - readline-devel
+#         - tk-devel
+#         - gdbm-devel
+#         - libpcap-devel
+#         - xz-devel
+#         - gcc
+#         - curl
+#         - wget
+#         - unzip
+#   - name: mkdir
+#     file:
+#       path: ~/.pyenv
+#       owner: root
+#       state: directory
+#
+#   - name: Install pyenv
+#     shell: git clone https://github.com/pyenv/pyenv.git  ~/.pyenv
+#
+#   - name: Install pyenv-virtualenv
+#     shell: git clone https://github.com/pyenv/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
+#
+#   - name: set pyenv
+#     shell: "{{ item }}"
+#     with_items:
+#     - echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
+#     - echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
+#     - echo 'eval "$(pyenv init -)"' >> ~/.bashrc
+#
+#   - name: Install default python version
+#     shell: pyenv install 3.7.0
+  - name:
+    shell: pyenv global 3.7.0
+  - name:
+    shell: pip3 install --upgrade pip
+    tags: pip
+  - name: install package
+    shell: pip3 install {{ item }}
+    with_items:
+      - InstagramAPI
+      - Scrapy
+      - scrapy-redis
+      - threadpool
+
+#   - name: mkdir ig
+#     file:
+#       path: /root/ig
+#       owner: root
+#       state: directory
+#
+#   - name: git pull
+#     git:
+#      repo: "https://github.com/ZhaoGuan/ig_crawler.git"
+#      dest: /root/ig/ig_crawler

@@ -1,0 +1,8 @@
+# - hosts: crawler
+- hosts: crawler
+  tasks:
+  - name: crawler running pid
+    shell: ps -ax |grep 'scrapy crawl ig'|grep -v 'grep'
+    register: result
+    failed_when: result.stdout_lines == []
+  - debug: var=result

@@ -1,0 +1,10 @@
+- hosts: redis
+  tasks:
+  - name: update userinfo
+    become: yes
+    become_method: sudo
+    copy:
+      src: user_info.txt
+      remote_src : no
+      dest: /root/ig/ig_crawler/ig_crawler/user_info.txt
+      owner: root

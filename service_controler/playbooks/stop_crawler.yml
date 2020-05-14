@@ -1,0 +1,28 @@
+# - hosts: crawler
+- hosts: crawler
+  tasks:
+  - name: crawler running pid
+    shell: ps -ax |grep 'scrapy crawl ig'|grep -v 'grep'
+    register: result
+    failed_when: result.stdout_lines == []
+  - debug: var=result
+
+  - name: stop all crawler
+    shell: ps -ax |grep 'scrapy crawl ig'|grep -v 'grep'| awk '{ print $1 }'|xargs kill -2
+    register: result
+    ignore_errors: true
+    delay: 20
+  - debug: var=result
+
+  - name: kill all crawler
+    shell: ps -ax |grep 'scrapy crawl ig'|grep -v 'grep'| awk '{ print $1 }'|xargs kill -9
+    register: result
+    ignore_errors: true
+    delay: 20
+  - debug: var=result
+
+  - name: crawler running pid check
+    shell: ps -ax |grep 'scrapy crawl ig'|grep -v 'grep'
+    register: result
+    failed_when: result.stdout_lines != []
+  - debug: var=result

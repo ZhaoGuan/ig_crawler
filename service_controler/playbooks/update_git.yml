@@ -1,0 +1,10 @@
+- hosts: crawler
+  tasks:
+  - name: remove git
+    file:
+      path: /root/ig/
+      state: absent
+  - name: git update
+    git:
+     repo: "https://github.com/ZhaoGuan/ig_crawler.git"
+     dest: /root/ig/ig_crawler

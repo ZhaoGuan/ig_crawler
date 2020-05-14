@@ -1,0 +1,7 @@
+- hosts: crawler
+  tasks:
+  - name: crawler run scrapy
+    shell: source /root/ig/ig_crawler/ig_crawler/run_scrapy.sh
+    register: result
+
+  - debug: var=result
