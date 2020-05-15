@@ -2,11 +2,7 @@
 # -*- coding: utf-8 -*-
 # __author__ = 'Gz'
 import redis
-
-# REDIS_HOST = "localhost"
-# REDIS_HOST = "45.11.0.16"
-REDIS_HOST = "45.151.175.204"
-REDIS_PASSWORD = 99399
+from .config import REDIS_HOST, REDIS_PASSWORD
 
 
 class RedisPusher:
