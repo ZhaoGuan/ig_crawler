@@ -36,7 +36,6 @@ class RedisPoper:
                     line = data + "\n"
                     self.file.write(line.encode('utf-8'))
             else:
-                os.popen("rclone cpoy local:{source} {dest}".format(source=os.path.abspath(self.file_name), dest=GOOGLE_PATH))
                 self.file.close()
                 self.file_name = PATH + '/../data/' + str(int(round(time.time() * 1000))) + '.json'
                 self.file = open(self.file_name, 'wb')

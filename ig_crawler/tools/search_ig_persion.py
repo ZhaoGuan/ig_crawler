@@ -10,7 +10,8 @@ import time
 
 class SearchIG:
     def __init__(self):
-        self.login_info_list = json.load(open("./login_data.json"))["data"]
+        # self.login_info_list = json.load(open("./login_data.json"))["data"]
+        self.login_info_list = []
         self.API_URL = 'https://i.instagram.com/api/v1/'
         self.SIG_KEY_VERSION = '4'
 

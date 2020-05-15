@@ -494,7 +494,7 @@ class Statistics:
             relational_mapping[k] = relational[k]
 
 
-# if __name__ == "__main__":
+if __name__ == "__main__":
     # insert_all("/Users/gz/Desktop/project/ig_crawler/ig_crawler/1583654591094.json")
     # insert_all("/Users/gz/Desktop/project/ig_crawler/ig_crawler/1583905563229.json")
     # insert_all("/Users/gz/Desktop/project/ig_crawler/ig_crawler/1583905676517.json")
@@ -511,15 +511,15 @@ class Statistics:
     # insert_all("/Users/gz/Desktop/project/ig_crawler/ig_crawler/1584096958534.json")
     # insert_all("/Users/gz/Desktop/project/ig_crawler/ig_crawler/1584102440057.json")
     # insert_all("/Users/gz/Desktop/project/ig_crawler/ig_crawler/1584107899235.json")
-    # s = Statistics()
+    s = Statistics()
     # a = s.following("yuankeke001")
     # a = s.follower("yuankeke001")
     # a = s.user_id_base_username("yuankeke001")
     # a = s.check_friends("yuankeke001")
-    # a = s.who_may_know("yuankeke001")
+    a = s.who_may_know("yuankeke001")
     # a = s.interesting_user("yuankeke001")
     # a = s.check_friends("yuankeke001")
-    # print(a)
+    print(a)
     # ud = UserData()
     # a = ud.get_username_following("181603649")
     # print(a)
