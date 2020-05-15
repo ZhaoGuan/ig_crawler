@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # __author__ = 'Gz'
 import redis
-from config import REDIS_HOST, REDIS_PASSWORD
+from tools.config import REDIS_HOST, REDIS_PASSWORD
 
 
 class RedisPusher:
