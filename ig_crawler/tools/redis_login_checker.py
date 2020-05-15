@@ -10,6 +10,7 @@ from redis_login_info import RedisLoginInfo
 
 # REDIS_HOST = "localhost"
 REDIS_HOST = "45.11.0.16"
+REDIS_HOST = "45.151.175.204"
 REDIS_PASSWORD = 99399
 PATH = os.path.dirname(os.path.abspath(__file__))
 
