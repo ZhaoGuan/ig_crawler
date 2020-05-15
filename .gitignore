@@ -5,7 +5,7 @@ venv
 *.txt
 !requirements.txt
 */hosts
-service_controler/playbook/mysql_config.py
+service_controler/playbook/files/mysql_config.py
 i# Created by https://www.gitignore.io/api/python
 # Edit at https://www.gitignore.io/?templates=python
 
