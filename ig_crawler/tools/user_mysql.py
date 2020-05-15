@@ -495,7 +495,7 @@ class Statistics:
 
 
 if __name__ == "__main__":
-    # insert_all("/Users/gz/Desktop/project/ig_crawler/ig_crawler/1583654591094.json")
+    insert_all("/Users/gz/Desktop/project/ig_crawler/ig_crawler/1583654591094.json")
     # insert_all("/Users/gz/Desktop/project/ig_crawler/ig_crawler/1583905563229.json")
     # insert_all("/Users/gz/Desktop/project/ig_crawler/ig_crawler/1583905676517.json")
     # insert_all("/Users/gz/Desktop/project/ig_crawler/ig_crawler/1583911151801.json")
