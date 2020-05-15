@@ -297,6 +297,32 @@ class UserData:
         friends = [{"id": i, "name": user_mapping[i]} for i in friends]
         return friends
 
+    def t_friends(self, master_id):
+        following = self.following(master_id)
+        follower = self.follower(master_id)
+        if follower is False or following is False:
+            return False
+        id_list = []
+        user_mapping = {}
+        for i in following:
+            t_id = i["id"]
+            t_name = i["name"]
+            if t_id not in id_list:
+                user_mapping[t_id] = t_name
+        for i in follower:
+            t_id = i["id"]
+            t_name = i["name"]
+            if t_id not in id_list:
+                user_mapping[t_id] = t_name
+        following_id = [i["id"] for i in following]
+        follower_id = [i["id"] for i in follower]
+        friends = []
+        for i in following_id:
+            if i not in friends and i in follower_id:
+                friends.append(i)
+        friends = [{"id": i, "name": user_mapping[i]} for i in friends]
+        return friends
+
     def get_username_following(self, following):
         result = self.ig.run_select_sql(self.ig.get_username_from_following(following))
         if len(result) > 0:
@@ -356,6 +382,13 @@ def intersection(r, m):
 
 def union(r, m):
     return list(set(r).union(set(m)))
+
+
+def sort_by_value(d):
+    items = d.items()
+    backitems = [[v[1], v[0]] for v in items]
+    backitems.sort(reverse=True)
+    return [backitems[i][1] for i in range(0, len(backitems))]
 
 
 class Analysis:
@@ -420,6 +453,10 @@ class Analysis:
             if t_friend is False:
                 continue
             t_friend = [f["id"] for f in t_friend]
+            try:
+                t_friend.remove(my_id)
+            except:
+                pass
             all_data[user] = t_friend
         for id, data in all_data.items():
             data = intersection(friends_id, data)
@@ -933,6 +970,174 @@ class Analysis:
             if data:
                 self.get_group(my_id, result, temp_up, data, intersection_data, all_data)
 
+    def same_friends(self, name):
+        user_data = self.ud.user_data_base_username(name)
+        my_id = user_data["id"]
+        friends = self.ud.friends(my_id)
+        friends_id = [f["id"] for f in friends]
+        all_user = friends_id
+        all_data = {}
+        intersection_data = {}
+        for user in all_user:
+            t_friend = self.ud.friends(user)
+            if t_friend is False:
+                continue
+            t_friend = [f["id"] for f in t_friend]
+            try:
+                t_friend.remove(my_id)
+            except:
+                pass
+            all_data[user] = t_friend
+        for id, data in all_data.items():
+            data = intersection(friends_id, data)
+            if len(data) == 0:
+                continue
+            intersection_data[id] = data
+        return intersection_data
+
+    def friends_friends_top(self, name):
+        user_data = self.ud.user_data_base_username(name)
+        my_id = user_data["id"]
+        friends = self.ud.friends(my_id)
+        friends_id = [f["id"] for f in friends]
+        following = self.ud.following(my_id)
+        following_id = [f["id"] for f in following]
+        all_user = friends_id
+        all_data = {}
+        for user in all_user:
+            t_friend = self.ud.friends(user)
+            if t_friend is False:
+                continue
+            t_friend = [f["id"] for f in t_friend]
+            try:
+                t_friend.remove(my_id)
+            except:
+                pass
+            all_data[user] = t_friend
+        all_friend_friends = []
+        for user_id, data in all_data.items():
+            for data_ in data:
+                all_friend_friends.append(data_)
+        _all_friend_friends = list(set(all_friend_friends).difference(set(friends_id)))
+        friend_friend_list = []
+        friend_friend_mapping = {}
+        for friend_friend in all_friend_friends:
+            if friend_friend in _all_friend_friends and friend_friend not in following_id:
+                if friend_friend in friend_friend_list:
+                    friend_friend_mapping[friend_friend] += 1
+                else:
+                    friend_friend_list.append(friend_friend)
+                    friend_friend_mapping[friend_friend] = 1
+        return {"list": sort_by_value(friend_friend_mapping), "mapping": friend_friend_mapping}
+
+    def friends_friend_follower_top(self, name):
+        user_data = self.ud.user_data_base_username(name)
+        my_id = user_data["id"]
+        friends = self.ud.friends(my_id)
+        friends_id = [f["id"] for f in friends]
+        following = self.ud.following(my_id)
+        following_id = [f["id"] for f in following]
+        all_user = friends_id
+        all_data = {}
+        for user in all_user:
+            t_friend = self.ud.friends(user)
+            if t_friend is False:
+                continue
+            try:
+                t_friend.remove(my_id)
+            except:
+                pass
+            t_f_list = []
+            for t_f in t_friend:
+                t_f_d = self.ud.user_data_base_user_id(t_f["id"])
+                if t_f_d:
+                    t_f_list.append({"id": t_f["id"], "follower_count": t_f_d["follower_count"]})
+            all_data[user] = t_f_list
+        print(all_data)
+        result = {}
+        for user_id, data in all_data.items():
+            for i in data:
+                if i["id"] not in friends_id and i not in following_id and i["id"] not in result.keys():
+                    result[i["id"]] = i["follower_count"]
+
+        print(result)
+        return {"list": sort_by_value(result), "mapping": result}
+
+    def friends_following_top(self, name):
+        user_data = self.ud.user_data_base_username(name)
+        my_id = user_data["id"]
+        friends = self.ud.friends(my_id)
+        friends_id = [f["id"] for f in friends]
+        following = self.ud.following(my_id)
+        following_id = [f["id"] for f in following]
+        all_user = friends_id
+        all_data = {}
+        for user in all_user:
+            t_following = self.ud.following(user)
+            if t_following is False:
+                continue
+            t_following = [f["id"] for f in t_following]
+            try:
+                t_following.remove(my_id)
+            except:
+                pass
+            all_data[user] = t_following
+        result = {}
+        result_list = []
+        for user_id, data in all_data.items():
+            for i in data:
+                if i not in friends_id and i not in following_id:
+                    if i in result_list:
+                        result[i] += 1
+                    else:
+                        result_list.append(i)
+                        result[i] = 1
+        print(result)
+        return {"list": sort_by_value(result), "mapping": result}
+
+    def my_friends_know_a_friends_top(self, name):
+        user_data = self.ud.user_data_base_username(name)
+        my_id = user_data["id"]
+        friends = self.ud.friends(my_id)
+        friends_id = [f["id"] for f in friends]
+        following = self.ud.following(my_id)
+        following_id = [f["id"] for f in following]
+        all_user = friends_id
+        all_data = {}
+        for user in all_user:
+            t_friend = self.ud.friends(user)
+            if t_friend is False:
+                continue
+            t_friend = [f["id"] for f in t_friend]
+            try:
+                t_friend.remove(my_id)
+            except:
+                pass
+            all_data[user] = t_friend
+        result = {}
+        for user_id, data in all_data.items():
+            t_user_friends_list = []
+            for t_user_id, t_data in all_data.items():
+                if t_user_id != user_id:
+                    for t_f in t_data:
+                        t_user_friends_list.append(t_f)
+            try:
+                t_user_friends_list.remove(user_id)
+            except:
+                pass
+            t_result = {}
+            t_result_list = []
+            for f_id in t_user_friends_list:
+                if f_id in data:
+                    if f_id in t_result_list:
+                        t_result[f_id] += 1
+                    else:
+                        t_result_list.append(f_id)
+                        t_result[f_id] = 1
+            print(t_result)
+            result[user_id] = {"list": sort_by_value(t_result), "mapping": t_result}
+        return result
+
 
 def my_all_report(user):
     GS = GoogleSheet('https://www.googleapis.com/auth/spreadsheets', '12MmAW4HNl4B3bkFMYI14Em53exW3EL_1sgCRSp4UIW0')
@@ -971,84 +1176,108 @@ def my_group_test(user):
     print(sheet)
 
 
-def my_group_id():
-    data = [['273481', '4140774272', '54650679'], ['1474272023', '181603649', '4140774272', '54650679'],
-            ['181603649', '4140774272', '42502137', '54650679'], ['181603649', '4140774272', '54650679'],
-            ['1512682299', '4140774272', '5606253289'], ['144166', '4140774272', '4960266234'],
-            ['2392409', '4009415770', '4140774272'], ['1474272023', '223257503', '4140774272'],
-            ['273481', '4009415770', '4140774272'], ['1474272023', '181603649', '26001306', '4009415770', '4140774272'],
-            ['26001306', '4009415770', '4140774272'], ['181603649', '4009415770', '4140774272'],
-            ['3040634', '4009415770', '4140774272'], ['2293895854', '33961614', '4140774272'],
-            ['1474272023', '2049692', '2069628', '26001306', '266913770', '4140774272', '821792'],
-            ['2049692', '2069628', '26001306', '4140774272', '682270'],
-            ['2049692', '2069628', '266913770', '4140774272', '682270'],
-            ['2049692', '2069628', '266913770', '4140774272', '821792'], ['2069628', '4140774272', '821792'],
-            ['2049692', '2069628', '4140774272', '4765226894'], ['223257503', '4140774272', '5452786461'],
-            ['14837682', '4140774272', '821792'],
-            ['1474272023', '2049692', '2069628', '29720685', '4140774272', '821792'],
-            ['14497357', '4140774272', '821792'], ['375451348', '4140774272', '821792'],
-            ['33961614', '4140774272', '821792'], ['2049692', '2069628', '4140774272', '821792'],
-            ['29720685', '4140774272', '529914741', '821792'], ['254638430', '3537056619', '4140774272', '4790080914'],
-            ['3537056619', '4140774272', '682270'], ['254638430', '3537056619', '4140774272', '5625418090'],
-            ['181603649', '203617153', '4140774272'], ['33961614', '4140774272', '6251652152'],
-            ['181603649', '4140774272', '42502137', '54650679', '6251652152'],
-            ['4140774272', '42502137', '54650679', '6251652152'], ['14837682', '38569514', '4140774272'],
-            ['14837682', '4140774272', '529914741'], ['4009415770', '4140774272', '529914741'],
-            ['1186210811', '273481', '4140774272'], ['1186210811', '29109254', '4140774272'],
-            ['385813', '4009415770', '4140774272'], ['1666189105', '17625021', '4140774272'],
-            ['1666189105', '2305618880', '4140774272', '5625418090'],
-            ['1044590017', '1666189105', '17297519', '228160939', '4140774272'],
-            ['1044590017', '1666189105', '4140774272', '5625418090'],
-            ['1666189105', '228160939', '375451348', '4140774272'], ['1666189105', '1982324715', '4140774272'],
-            ['1666189105', '4140774272', '5625418090'], ['14837682', '4140774272', '789715'],
-            ['1474272023', '181603649', '4140774272', '789715'], ['2134439879', '4140774272', '682270'],
-            ['1467477592', '4140774272', '682270'], ['2049692', '266913770', '4140774272', '682270'],
-            ['3598953314', '4140774272', '5625418090'], ['254638430', '4140774272', '5625418090'],
-            ['17625021', '254638430', '4140774272'], ['254638430', '375451348', '4140774272'],
-            ['1467477592', '1474272023', '4140774272'], ['1474272023', '273481', '4140774272'],
-            ['1474272023', '2049692', '2069628', '26001306', '4009415770', '4140774272'],
-            ['1474272023', '181603649', '4009415770', '4140774272'],
-            ['1474272023', '2049692', '2069628', '266913770', '4140774272', '821792'],
-            ['1474272023', '2069628', '266913770', '4140774272', '821792'],
-            ['1474272023', '29720685', '4140774272', '821792'], ['1474272023', '3037318828', '4140774272'],
-            ['1474272023', '4140774272', '821792'], ['1474272023', '266913770', '4140774272'],
-            ['29109254', '3040634', '4140774272'], ['1467477592', '2049692', '4140774272'],
-            ['2049692', '273481', '4140774272'], ['2049692', '4140774272', '821792'],
-            ['228160939', '375451348', '4140774272'], ['22911378069', '4140774272', '5973413688'],
-            ['2049692', '2069628', '266913770', '4140774272'], ['14837682', '29720685', '4140774272'],
-            ['270339026', '4140774272', '5780272989'], ['17297519', '4140774272', '4790080914'],
-            ['1044590017', '17297519', '4140774272'], ['144166', '2305618880', '4140774272'],
-            ['14837682', '33961614', '4140774272'], ['33961614', '4140774272', '5606253289'],
-            ['1044590017', '1666189105', '17297519', '4140774272', '5625418090'],
-            ['1044590017', '4140774272', '5625418090'], ['186817484', '3037318828', '4140774272'],
-            ['15666662', '4140774272', '682270'],
-            ['1044590017', '1666189105', '17297519', '228160939', '4140774272', '8149663261'],
-            ['1044590017', '1666189105', '4140774272', '8149663261'], ['254638430', '4140774272', '8149663261'],
-            ['228160939', '4140774272', '8149663261'], ['1666189105', '1982324715', '4140774272', '8149663261'],
-            ['1467477592', '181603649', '4140774272'], ['181603649', '273481', '4140774272'],
-            ['14837682', '181603649', '4140774272'],
-            ['1474272023', '181603649', '4009415770', '4140774272', '54650679'], ['14837682', '26001306', '4140774272'],
-            ['2049692', '2069628', '26001306', '4140774272'], ['2069628', '26001306', '4140774272'],
-            ['273481', '4140774272', '42502137'], ['254638430', '4140774272', '4790080914'],
-            ['17297519', '254638430', '3112003535', '3537056619', '4140774272', '4790080914'],
-            ['1044590017', '1666189105', '17297519', '228160939', '3112003535', '4140774272'],
-            ['1044590017', '1666189105', '3112003535', '4140774272', '5625418090'],
-            ['254638430', '3112003535', '3537056619', '4140774272', '5625418090'],
-            ['144166', '254638430', '3112003535', '4140774272', '5625418090'],
-            ['228160939', '3112003535', '4140774272'], ['1666189105', '1982324715', '3112003535', '4140774272'],
-            ['1666189105', '3112003535', '4140774272', '5625418090'], ['1666189105', '3112003535', '4140774272'],
-            ['273481', '4140774272', '770095'], ['3040634', '4009415770', '4140774272', '529914741', '770095'],
-            ['29109254', '3040634', '4140774272', '770095'], ['223257503', '4140774272', '770095'],
-            ['4140774272', '529914741', '770095'], ['144166', '254638430', '4140774272'],
-            ['17625021', '1982324715', '4140774272'], ['1666189105', '1982324715', '228160939', '4140774272'],
-            ['1467477592', '4140774272', '53198861'], ['273481', '4140774272', '53198861'],
-            ['1474272023', '181603649', '223257503', '4140774272', '53198861', '54650679'],
-            ['4140774272', '53198861', '682270'], ['181603649', '4140774272', '53198861', '54650679'],
-            ['1186210811', '4140774272', '53198861', '54650679'], ['223257503', '4140774272', '53198861'],
-            ['14497357', '273481', '4140774272']]
-    print(len(data))
-    GS = GoogleSheet('https://www.googleapis.com/auth/spreadsheets', '1S6tTRyRExGxyGU807gLRmvxYiNmBA5UAin131FTt4LA')
-    sheet = GS.update_sheet('yuankeke001_id', "A2:M", data)
+def friends_friends_top_report(name):
+    GS = GoogleSheet('https://www.googleapis.com/auth/spreadsheets', '1YLA3wxZwZJSM_yjwi4Sey1L1-y__ufwovw6mPurApCc')
+    ud = UserData()
+    analysis = Analysis()
+    data = analysis.friends_friends_top(name)
+    data = data["mapping"]
+    result = []
+    for k, v in data.items():
+        u_d = ud.user_data_base_user_id(k)
+        if u_d is False:
+            continue
+        n = u_d["user_name"]
+        f_n = u_d["full_name"]
+        result.append([n + " " + f_n, v])
+    sheet = GS.update_sheet(name + "_好友的好友推荐", "A1:Z", result)
+    print(sheet)
+
+
+def friends_following_top_report(name):
+    GS = GoogleSheet('https://www.googleapis.com/auth/spreadsheets', '1YLA3wxZwZJSM_yjwi4Sey1L1-y__ufwovw6mPurApCc')
+    ud = UserData()
+    analysis = Analysis()
+    data = analysis.friends_following_top(name)
+    data = data["mapping"]
+    result = []
+    for k, v in data.items():
+        u_d = ud.user_data_base_user_id(k)
+        if u_d is False:
+            continue
+        n = u_d["user_name"]
+        f_n = u_d["full_name"]
+        result.append([n + " " + f_n, v])
+    sheet = GS.update_sheet(name + "_好友following推荐", "A1:Z", result)
+    print(sheet)
+
+
+def friends_friend_follower_top_report(name):
+    GS = GoogleSheet('https://www.googleapis.com/auth/spreadsheets', '1YLA3wxZwZJSM_yjwi4Sey1L1-y__ufwovw6mPurApCc')
+    ud = UserData()
+    analysis = Analysis()
+    data = analysis.friends_friend_follower_top(name)
+    data = data["mapping"]
+    result = []
+    for k, v in data.items():
+        u_d = ud.user_data_base_user_id(k)
+        if u_d is False:
+            continue
+        n = u_d["user_name"]
+        f_n = u_d["full_name"]
+        result.append([n + " " + f_n, v])
+    sheet = GS.update_sheet(name + "_好友的好友根据follower推荐", "A1:Z", result)
+    print(sheet)
+
+
+def same_friends_report(name):
+    GS = GoogleSheet('https://www.googleapis.com/auth/spreadsheets', '1YLA3wxZwZJSM_yjwi4Sey1L1-y__ufwovw6mPurApCc')
+    ud = UserData()
+    analysis = Analysis()
+    data = analysis.same_friends(name)
+    result = []
+    for k, v in data.items():
+        u_d = ud.user_data_base_user_id(k)
+        if u_d is False:
+            continue
+        n = u_d["user_name"]
+        f_n = u_d["full_name"]
+        temp = [n + " " + f_n]
+        for i in v:
+            t_u_d = ud.user_data_base_user_id(i)
+            if t_u_d is False:
+                continue
+            t_n = t_u_d["user_name"]
+            t_f_n = t_u_d["full_name"]
+            temp.append(t_n + " " + t_f_n)
+        result.append(temp)
+    sheet = GS.update_sheet(name + "_共同好友", "A1:ZZ", result)
+    print(sheet)
+
+
+def my_friends_know_a_friends_top_report(name):
+    GS = GoogleSheet('https://www.googleapis.com/auth/spreadsheets', '1YLA3wxZwZJSM_yjwi4Sey1L1-y__ufwovw6mPurApCc')
+    ud = UserData()
+    analysis = Analysis()
+    data = analysis.my_friends_know_a_friends_top(name)
+    result = []
+    for k, v in data.items():
+        u_d = ud.user_data_base_user_id(k)
+        if u_d is False:
+            continue
+        n = u_d["user_name"]
+        f_n = u_d["full_name"]
+        temp = [n + " " + f_n]
+        if v["mapping"]:
+            for i, c in v["mapping"].items():
+                t_u_d = ud.user_data_base_user_id(i)
+                if t_u_d is False:
+                    continue
+                t_n = t_u_d["user_name"]
+                t_f_n = t_u_d["full_name"]
+                temp.append(t_n + " " + t_f_n + " " + str(c))
+        result.append(temp)
+    sheet = GS.update_sheet(name + "_a_好友认识我好友", "A1:ZZ", result)
     print(sheet)
 
 
@@ -1056,9 +1285,23 @@ if __name__ == "__main__":
     # my_all_report("ter.zhao")
     analysis = Analysis()
     # a = analysis.friends_group("yuankeke001")
-    # a = analysis.friends_group("yuankeke001")
+    # a = analysis.friends_friends_top("yuankeke001")
+    # a = analysis.friends_friend_follower_top("yuankeke001")
+    # a = analysis.friends_following_top("yuankeke001")
+    # a = analysis.my_friends_know_a_friends_top("yuankeke001")
+    # a = analysis.friends_friends_top("ter.zhao")
     # print(a)
     # my_group_test("ter.zhao")
-    my_group_test("yuankeke001")
+    # my_group_test("yuankeke001")
     # my_group("yuankeke001")
     # my_group_id()
+    # friends_friends_top_report("yuankeke001")
+    # friends_friend_follower_top_report("yuankeke001")
+    # friends_following_top_report("yuankeke001")
+    # same_friends_report("yuankeke001")
+    my_friends_know_a_friends_top_report("yuankeke001")
+    # friends_friends_top_report("ter.zhao")
+    # friends_friend_follower_top_report("ter.zhao")
+    # friends_following_top_report("ter.zhao")
+    # same_friends_report("ter.zhao")
+    my_friends_know_a_friends_top_report("ter.zhao")

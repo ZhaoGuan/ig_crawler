@@ -107,7 +107,8 @@ FEED_EXPORT_ENCODING = 'utf-8'
 # ITEM_PIPELINES = {
 #     'scrapy_redis.pipelines.RedisPipeline': 300,
 # }
-REDIS_HOST = '45.11.0.16'
+# REDIS_HOST = '45.11.0.16'
+REDIS_HOST = '45.151.175.204'
 REDIS_PARAMS = {
     'password': 99399,
 }
