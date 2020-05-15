@@ -7,7 +7,7 @@ import os
 import json
 import datetime
 from redis_login_info import RedisLoginInfo
-from .config import REDIS_HOST, REDIS_PASSWORD
+from config import REDIS_HOST, REDIS_PASSWORD
 
 PATH = os.path.dirname(os.path.abspath(__file__))
 GOOGLE_PATH = "operaxx1:/ig/20200514"

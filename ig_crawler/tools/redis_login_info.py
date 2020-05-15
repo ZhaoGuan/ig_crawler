@@ -11,7 +11,7 @@ import InstagramAPI.InstagramAPI as IAPI
 import requests
 import random
 import threadpool
-from .config import REDIS_HOST, REDIS_PASSWORD
+from config import REDIS_HOST, REDIS_PASSWORD
 
 PATH = os.path.dirname(os.path.abspath(__file__))
 login_data_path = PATH + "/../login_data.json"
