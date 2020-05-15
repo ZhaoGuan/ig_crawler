@@ -149,11 +149,3 @@ def insert_all(json_file):
     print(count)
 
 
-if __name__ == "__main__":
-    PATH = os.path.dirname(os.path.abspath(__file__))
-    data_path = PATH + "/../data"
-    files = os.listdir(data_path)
-    for file in files:
-        file_path = os.path.abspath(data_path + "/" + file)
-        print(file_path)
-        insert_all(file_path)

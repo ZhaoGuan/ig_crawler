@@ -12,7 +12,7 @@ from tools.config import REDIS_HOST, REDIS_PASSWORD
 PATH = os.path.dirname(os.path.abspath(__file__))
 
 
-class RedisPoper:
+class RedisChecker:
     def __init__(self):
         self.r = redis.Redis(host=REDIS_HOST, port=6379, password=REDIS_PASSWORD, decode_responses=True)
 
@@ -23,10 +23,3 @@ class RedisPoper:
         time.sleep(30)
 
 
-if __name__ == "__main__":
-    rp = RedisPoper()
-    while True:
-        try:
-            rp.login_checker()
-        except:
-            pass
