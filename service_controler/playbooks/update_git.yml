@@ -8,3 +8,9 @@
     git:
      repo: "https://github.com/ZhaoGuan/ig_crawler.git"
      dest: /root/ig/ig_crawler
+  - name: update mysql_config
+    copy:
+      src: mysql_config.py
+      remote_src : no
+      dest: /root/ig/ig_crawler/ig_crawler/tools/mysql_config.py
+      owner: root
