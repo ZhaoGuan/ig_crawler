@@ -7,11 +7,12 @@ from tools.search_ig_persion import SearchIG
 from tools.user_mysql import Statistics
 from tools.googlesheet import GoogleSheet
 import copy
+from mysql_config import MYSQL_HOST, PASSWORD
 
 
 class IGDB:
     def __init__(self):
-        self.db = pymysql.connect("localhost", "root", "gz19891020", "ig", charset="utf8mb4")
+        self.db = pymysql.connect(MYSQL_HOST, "root", PASSWORD, "ig", charset="utf8mb4")
         self.cursor = self.db.cursor()
 
     def insert_user(self, user_data):
@@ -551,6 +552,8 @@ class Analysis:
 
     def friends_friends_top(self, name):
         user_data = self.ud.user_data_base_username(name)
+        if user_data is False:
+            print(name)
         my_id = user_data["id"]
         friends = self.ud.friends(my_id)
         friends_id = [f["id"] for f in friends]
@@ -842,20 +845,8 @@ if __name__ == "__main__":
     "_共同好友"
     "_好友的好友根据follower推荐"
     "_a_好友认识我好友"
-    analysis = Analysis()
-    # a = analysis.friends_group("yuankeke001")
-    # a = analysis.friends_friends_top("yuankeke001")
-    # a = analysis.friends_friend_follower_top("yuankeke001")
-    # a = analysis.friends_following_top("yuankeke001")
-    # a = analysis.my_friends_know_a_friends_top("yuankeke001")
-    # a = analysis.friends_friends_top("ter.zhao")
-    # print(a)
-    # friends_friends_top_report("ter.zhao")
-    # friends_friend_follower_top_report("ter.zhao")
-    # friends_following_top_report("ter.zhao")
-    # same_friends_report("ter.zhao")
-    # my_friends_know_a_friends_top_report("ter.zhao")
-    for i in ["velvet_cat", "yuankeke001", "tsuziai", "zhangmela", "terzhao", "alina.archer"]:
+    # for i in ["velvet_cat", "yuankeke001", "tsuziai", "zhangmela", "ter.zhao", "alina.archer"]:
+    for i in ["zhangmela", "alina.archer"]:
         friends_friends_top_report(i)
         friends_friend_follower_top_report(i)
         friends_following_top_report(i)
