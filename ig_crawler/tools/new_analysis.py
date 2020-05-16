@@ -7,7 +7,8 @@ from tools.search_ig_persion import SearchIG
 from tools.user_mysql import Statistics
 from tools.googlesheet import GoogleSheet
 import copy
-from mysql_config import MYSQL_HOST, PASSWORD
+from tools.mysql_config import MYSQL_HOST, PASSWORD
+
 
 
 class IGDB:
