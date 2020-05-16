@@ -12,7 +12,7 @@ from mysql_config import MYSQL_HOST, PASSWORD
 
 class IGDB:
     def __init__(self):
-        self.db = pymysql.connect(MYSQL_HOST, "root", PASSWORD, "ig", charset="utf8mb4")
+        self.db = pymysql.connect('localhost', "root", PASSWORD, "ig", charset="utf8mb4")
         self.cursor = self.db.cursor()
 
     def insert_user(self, user_data):
