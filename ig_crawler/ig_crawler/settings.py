@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from tools.redis_config import REDIS_PASSWORD, REDIS_HOST
 
 # Scrapy settings for ig_crawler project
 #
@@ -108,8 +109,8 @@ FEED_EXPORT_ENCODING = 'utf-8'
 #     'scrapy_redis.pipelines.RedisPipeline': 300,
 # }
 # REDIS_HOST = '45.11.0.16'
-REDIS_HOST = '45.151.175.204'
+REDIS_HOST = REDIS_HOST
 REDIS_PARAMS = {
-    'password': 99399,
+    'password': REDIS_PASSWORD,
 }
 REDIS_PORT = 6379

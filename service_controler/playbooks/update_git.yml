@@ -14,3 +14,10 @@
       remote_src : no
       dest: /root/ig/ig_crawler/ig_crawler/tools/mysql_config.py
       owner: root
+
+  - name: update redis_config
+    copy:
+      src: redis_config.py
+      remote_src : no
+      dest: /root/ig/ig_crawler/ig_crawler/tools/redis_config.py
+      owner: root

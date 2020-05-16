@@ -6,7 +6,7 @@ import time
 import os
 import json
 import datetime
-from tools.config import REDIS_HOST, REDIS_PASSWORD
+from tools.redis_config import REDIS_HOST, REDIS_PASSWORD
 
 PATH = os.path.dirname(os.path.abspath(__file__))
 GOOGLE_PATH = "operaxx1:/ig/20200514"

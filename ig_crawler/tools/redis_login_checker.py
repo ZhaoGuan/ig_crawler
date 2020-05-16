@@ -7,7 +7,7 @@ import os
 import json
 import datetime
 from tools.redis_login_info import RedisLoginInfo
-from tools.config import REDIS_HOST, REDIS_PASSWORD
+from tools.redis_config import REDIS_HOST, REDIS_PASSWORD
 
 PATH = os.path.dirname(os.path.abspath(__file__))
 
