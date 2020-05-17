@@ -151,7 +151,7 @@ class UpdataIGDB:
 def _insert_all(i):
     ig = UpdataIGDB()
     master = i["user_data"]["user"]["pk"]
-    user_is_have = ig.get_user_by_id(i)
+    user_is_have = ig.get_user_by_id(master)
     if user_is_have is False:
         ig.insert_user(i["user_data"]["user"])
         ig.delete_user_follower(master)
