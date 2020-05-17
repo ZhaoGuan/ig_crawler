@@ -4,12 +4,13 @@
 import pymysql
 import json
 import os
-from tools.mysql_config import MYSQL_HOST, PASS_WORD
+from tools.mysql_config import MYSQL_HOST, PASSWORD
+import threadpool
 
 
 class IGDB:
     def __init__(self):
-        self.db = pymysql.connect(MYSQL_HOST, "root", PASS_WORD, "ig", charset="utf8mb4")
+        self.db = pymysql.connect(MYSQL_HOST, "root", PASSWORD, "ig", charset="utf8mb4")
         self.cursor = self.db.cursor()
 
     def insert_user(self, user_data):
@@ -130,22 +131,30 @@ class UpdataIGDB:
         self.igdb.run_select_sql(self.igdb.get_username_from_following(following))
 
 
-def insert_all(json_file):
+def _insert_all(i):
     ig = UpdataIGDB()
+    i = json.loads(i, encoding="utf-8")
+    master = i["user_data"]["user"]["pk"]
+    inster_user = ig.insert_user(i["user_data"]["user"])
+    if inster_user:
+        ig.delete_user_follower(master)
+        ig.delete_user_following(master)
+        for follower in i["follower"]:
+            ig.insert_user_follower(master, follower["pk"], follower["username"])
+        for following in i["following"]:
+            ig.insert_user_following(master, following["pk"], following["username"])
+
+
+def insert_all(json_file):
     count = 0
+    cases = []
     with open(json_file) as f:
         for i in f:
             count += 1
             i = json.loads(i, encoding="utf-8")
-            master = i["user_data"]["user"]["pk"]
-            inster_user = ig.insert_user(i["user_data"]["user"])
-            if inster_user:
-                ig.delete_user_follower(master)
-                ig.delete_user_following(master)
-                for follower in i["follower"]:
-                    ig.insert_user_follower(master, follower["pk"], follower["username"])
-                for following in i["following"]:
-                    ig.insert_user_following(master, following["pk"], following["username"])
+            cases.append(i)
+    pool = threadpool.ThreadPool(10)
+    requests = threadpool.makeRequests(_insert_all, cases)
+    [pool.putRequest(req) for req in requests]
+    pool.wait()
     print(count)
-
-
