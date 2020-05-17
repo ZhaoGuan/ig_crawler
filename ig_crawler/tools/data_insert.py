@@ -154,8 +154,8 @@ def _insert_all(i):
     user_is_have = ig.get_user_by_id(master)
     if user_is_have is False:
         ig.insert_user(i["user_data"]["user"])
-        ig.delete_user_follower(master)
-        ig.delete_user_following(master)
+        # ig.delete_user_follower(master)
+        # ig.delete_user_following(master)
         for follower in i["follower"]:
             ig.insert_user_follower(master, follower["pk"], follower["username"])
         for following in i["following"]:
