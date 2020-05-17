@@ -87,6 +87,10 @@ class IGDB:
             user_id)
         return sql
 
+    def get_user_base_user_id(self, user_id):
+        sql = "SELECT * FROM user_data WHERE user_id='%s'" % (user_id)
+        return sql
+
     def run_insert_delete_sql(self, sql):
         try:
             self.cursor.execute(sql)
@@ -133,6 +137,13 @@ class UpdataIGDB:
     def get_username_follower(self, following):
         self.igdb.run_select_sql(self.igdb.get_username_from_following(following))
 
+    def get_user_by_id(self, id):
+        data = self.igdb.run_select_sql(self.igdb.get_user_base_user_id(id))
+        if len(data) > 0:
+            return data
+        else:
+            return False
+
     def close_mysql(self):
         self.igdb.mysql_close()
 
@@ -140,14 +151,17 @@ class UpdataIGDB:
 def _insert_all(i):
     ig = UpdataIGDB()
     master = i["user_data"]["user"]["pk"]
-    inster_user = ig.insert_user(i["user_data"]["user"])
-    if inster_user:
+    user_is_have = ig.get_user_by_id(master)
+    if user_is_have:
+        ig.insert_user(i["user_data"]["user"])
         ig.delete_user_follower(master)
         ig.delete_user_following(master)
         for follower in i["follower"]:
             ig.insert_user_follower(master, follower["pk"], follower["username"])
         for following in i["following"]:
             ig.insert_user_following(master, following["pk"], following["username"])
+    else:
+        print("have the id", master)
     ig.close_mysql()
 
 
