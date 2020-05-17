@@ -10,10 +10,9 @@ import copy
 from tools.mysql_config import MYSQL_HOST, PASSWORD
 
 
-
 class IGDB:
     def __init__(self):
-        self.db = pymysql.connect('localhost', "root", PASSWORD, "ig", charset="utf8mb4")
+        self.db = pymysql.connect(MYSQL_HOST, "root", PASSWORD, "ig", charset="utf8mb4")
         self.cursor = self.db.cursor()
 
     def insert_user(self, user_data):
@@ -846,8 +845,10 @@ if __name__ == "__main__":
     "_共同好友"
     "_好友的好友根据follower推荐"
     "_a_好友认识我好友"
+    analysis = Analysis()
+    data = analysis.friends_friends_top('tsuziai')
     # for i in ["velvet_cat", "yuankeke001", "tsuziai", "zhangmela", "ter.zhao", "alina.archer"]:
-    for i in ["zhangmela", "alina.archer"]:
+    for i in ["alina.archer", 'velvet_cat', 'tsuziai']:
         friends_friends_top_report(i)
         friends_friend_follower_top_report(i)
         friends_following_top_report(i)
