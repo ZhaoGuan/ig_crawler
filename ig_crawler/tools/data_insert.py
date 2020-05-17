@@ -104,6 +104,9 @@ class IGDB:
         self.db.commit()
         return result
 
+    def mysql_close(self):
+        self.db.close()
+
 
 class UpdataIGDB:
     def __init__(self):
@@ -130,6 +133,9 @@ class UpdataIGDB:
     def get_username_follower(self, following):
         self.igdb.run_select_sql(self.igdb.get_username_from_following(following))
 
+    def close_mysql(self):
+        self.igdb.mysql_close()
+
 
 def _insert_all(i):
     ig = UpdataIGDB()
@@ -142,6 +148,7 @@ def _insert_all(i):
             ig.insert_user_follower(master, follower["pk"], follower["username"])
         for following in i["following"]:
             ig.insert_user_following(master, following["pk"], following["username"])
+    ig.close_mysql()
 
 
 def insert_all(json_file):
