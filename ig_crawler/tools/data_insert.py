@@ -133,7 +133,6 @@ class UpdataIGDB:
 
 def _insert_all(i):
     ig = UpdataIGDB()
-    i = json.loads(i, encoding="utf-8")
     master = i["user_data"]["user"]["pk"]
     inster_user = ig.insert_user(i["user_data"]["user"])
     if inster_user:
