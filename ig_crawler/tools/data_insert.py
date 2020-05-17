@@ -140,7 +140,6 @@ class UpdataIGDB:
     def get_user_by_id(self, id):
         data = self.igdb.run_select_sql(self.igdb.get_user_base_user_id(id))
         if len(data) > 0:
-            print(data)
             return data
         else:
             return False
@@ -152,7 +151,7 @@ class UpdataIGDB:
 def _insert_all(i):
     ig = UpdataIGDB()
     master = i["user_data"]["user"]["pk"]
-    user_is_have = ig.get_user_by_id(3095503589)
+    user_is_have = ig.get_user_by_id(i)
     if user_is_have is False:
         ig.insert_user(i["user_data"]["user"])
         ig.delete_user_follower(master)
