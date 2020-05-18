@@ -611,14 +611,11 @@ class Analysis:
                 if t_f_d:
                     t_f_list.append({"id": t_f["id"], "follower_count": t_f_d["follower_count"]})
             all_data[user] = t_f_list
-        print(all_data)
         result = {}
         for user_id, data in all_data.items():
             for i in data:
                 if i["id"] not in friends_id and i not in following_id and i["id"] not in result.keys():
                     result[i["id"]] = i["follower_count"]
-
-        print(result)
         return {"list": sort_by_value(result), "mapping": result}
 
     def friends_following_top(self, name):
@@ -650,7 +647,6 @@ class Analysis:
                     else:
                         result_list.append(i)
                         result[i] = 1
-        print(result)
         return {"list": sort_by_value(result), "mapping": result}
 
     def my_friends_know_a_friends_top(self, name):
@@ -692,7 +688,6 @@ class Analysis:
                     else:
                         t_result_list.append(f_id)
                         t_result[f_id] = 1
-            print(t_result)
             result[user_id] = {"list": sort_by_value(t_result), "mapping": t_result}
         return result
 
@@ -721,7 +716,6 @@ def my_group(user):
         for e in v:
             temp.append(e["name"] + " " + e["full_name"])
         result.append(temp)
-    print(len(result))
     sheet = GS.update_sheet(user + "_test1", "A2:Z", result)
     print(sheet)
 
