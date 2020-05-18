@@ -5,7 +5,8 @@ from tools.new_analysis import friends_following_top_report, my_friends_know_a_f
     friends_friend_follower_top_report, friends_friends_top_report, same_friends_report
 
 # for i in ["zhangmela", "alina.archer"]:
-for i in ["velvet_cat", "yuankeke001", "tsuziai", "zhangmela", "ter.zhao", "alina.archer"]:
+# for i in ["velvet_cat", "yuankeke001", "tsuziai", "zhangmela", "ter.zhao", "alina.archer"]:
+for i in ["velvet_cat", "tsuziai", "alina.archer"]:
     friends_friends_top_report(i)
     friends_friend_follower_top_report(i)
     friends_following_top_report(i)

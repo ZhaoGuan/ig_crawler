@@ -56,19 +56,19 @@ class IGDB:
         return sql
 
     def get_master_base_following(self, following):
-        sql = "SELECT * FROM following WHERE fowllowing='%s'" % (following)
+        sql = "SELECT master_id,following,following_username FROM following WHERE fowllowing='%s'" % (following)
         return sql
 
     def get_following_base_master(self, master):
-        sql = "SELECT * FROM following WHERE master_id='%s'" % (master)
+        sql = "SELECT master_id,following,following_username FROM following WHERE master_id='%s'" % (master)
         return sql
 
     def get_master_base_follower(self, follower):
-        sql = "SELECT * FROM follower WHERE fowllower='%s'" % (follower)
+        sql = "SELECT master_id,follower,follower_username FROM follower WHERE fowllower='%s'" % (follower)
         return sql
 
     def get_follower_base_master(self, master):
-        sql = "SELECT * FROM follower WHERE master_id='%s'" % (master)
+        sql = "SELECT master_id,follower,follower_username FROM follower WHERE master_id='%s'" % (master)
         return sql
 
     def get_user_base_user_name(self, user_name):
@@ -261,6 +261,7 @@ class UserData:
 
     def following(self, master_id):
         result = self.ig.run_select_sql(self.ig.get_following_base_master(str(master_id)))
+
         if result:
             i_following = [{"id": i[1], "name": i[2]} for i in result]
             return i_following

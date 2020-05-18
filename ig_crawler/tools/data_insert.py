@@ -173,7 +173,7 @@ def insert_all(json_file):
             count += 1
             i = json.loads(i, encoding="utf-8")
             cases.append(i)
-    pool = threadpool.ThreadPool(10)
+    pool = threadpool.ThreadPool(100)
     requests = threadpool.makeRequests(_insert_all, cases)
     [pool.putRequest(req) for req in requests]
     pool.wait()
