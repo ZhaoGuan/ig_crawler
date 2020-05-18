@@ -13,5 +13,3 @@ for file in files:
     file_path = os.path.abspath(data_path + "/" + file)
     print(file_path)
     insert_all(file_path)
-    print("等待10s")
-    time.sleep(10)
